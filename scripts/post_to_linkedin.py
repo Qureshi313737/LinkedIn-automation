@@ -1,28 +1,19 @@
 """
 post_to_linkedin.py
 ----------------------
-LinkedIn ke official UGC Posts API se text-post publish karta hai.
-
-ZAROORI environment variables (README.md mein poora process hai):
-    LINKEDIN_ACCESS_TOKEN   -> LinkedIn Developer Portal se milega
-    LINKEDIN_PERSON_URN     -> tumhare profile ka unique ID
-                               (format: urn:li:person:XXXXXXXXXX)
-
-Is file mein kahin bhi apni key/token type NAHI karni - sab kuch
-GitHub Secrets se apne aap aata hai.
+LinkedIn ke naye "Posts API" se text-post publish karta hai.
+(Purana /v2/ugcPosts endpoint 2023 mein retire ho chuka hai naye apps ke liye,
+isliye naya /rest/posts endpoint use kar rahe hain.)
 """
 
 import os
 import requests
 
-LINKEDIN_API_URL = "https://api.linkedin.com/v2/ugcPosts"
+LINKEDIN_API_URL = "https://api.linkedin.com/rest/posts"
+LINKEDIN_API_VERSION = "202608"   # YYYYMM format
 
 
 def post_to_linkedin(post_text):
-    """
-    post_text: wo final text jo LinkedIn par publish karna hai
-    Return: True (success) ya Exception raise karega (failure)
-    """
     access_token = os.environ.get("LINKEDIN_ACCESS_TOKEN")
     person_urn = os.environ.get("LINKEDIN_PERSON_URN")
 
@@ -35,20 +26,20 @@ def post_to_linkedin(post_text):
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json",
         "X-Restli-Protocol-Version": "2.0.0",
+        "LinkedIn-Version": LINKEDIN_API_VERSION,
     }
 
     payload = {
         "author": person_urn,
+        "commentary": post_text,
+        "visibility": "PUBLIC",
+        "distribution": {
+            "feedDistribution": "MAIN_FEED",
+            "targetEntities": [],
+            "thirdPartyDistributionChannels": [],
+        },
         "lifecycleState": "PUBLISHED",
-        "specificContent": {
-            "com.linkedin.ugc.ShareContent": {
-                "shareCommentary": {"text": post_text},
-                "shareMediaCategory": "NONE",
-            }
-        },
-        "visibility": {
-            "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
-        },
+        "isReshareDisabledByAuthor": False,
     }
 
     response = requests.post(
@@ -65,8 +56,6 @@ def post_to_linkedin(post_text):
 
 
 if __name__ == "__main__":
-    # Standalone test ke liye: python scripts/post_to_linkedin.py
-    # DHYAN RAKHNA: ye turant real post karega tumhare LinkedIn par!
     test_text = "This is a test post from my automation system. #Testing"
     post_to_linkedin(test_text)
     print("Post successful!")
