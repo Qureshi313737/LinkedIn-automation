@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LinkedIn AI Automation — Status Dashboard</title>
+<style>
+  body { font-family: Arial, Helvetica, sans-serif; background:#f4f4f4; margin:0; padding:20px; }
+  h1 { color:#0a66c2; font-size: 22px; }
+  table { width:100%; border-collapse: collapse; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.1); }
+  th, td { padding:10px 12px; text-align:left; border-bottom:1px solid #eee; font-size:13px; vertical-align: top; }
+  th { background:#0a66c2; color:#fff; position: sticky; top: 0; }
+  tr:hover { background:#fafafa; }
+  .success { color: #1a7f37; font-weight:bold; }
+  .failed { color: #d1242f; font-weight:bold; }
+  #loading { color:#666; }
+  .wrap { overflow-x: auto; }
+</style>
+</head>
+<body>
+  <h1>LinkedIn AI Automation — Status Dashboard</h1>
+  <p id="loading">History load ho raha hai...</p>
+  <div class="wrap">
+    <table id="history-table" style="display:none;">
+      <thead>
+        <tr><th>Date (UTC)</th><th>Status</th><th>Post Preview</th><th>Error</th></tr>
+      </thead>
+      <tbody id="history-body"></tbody>
+    </table>
+  </div>
+
+  <script>
+    fetch('history.json')
+      .then(res => res.json())
+      .then(data => {
+        const body = document.getElementById('history-body');
+        if (data.length === 0) {
+          document.getElementById('loading').textContent = 'Abhi tak koi run nahi hua hai.';
+          return;
+        }
+        data.forEach(item => {
+          const row = document.createElement('tr');
+          const statusClass = item.status === 'success' ? 'success' : 'failed';
+          row.innerHTML = `
+            <td>${item.date}</td>
+            <td class="${statusClass}">${item.status.toUpperCase()}</td>
+            <td>${item.post_preview || '-'}</td>
+            <td>${item.error || '-'}</td>
+          `;
+          body.appendChild(row);
+        });
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('history-table').style.display = 'table';
+      })
+      .catch(() => {
+        document.getElementById('loading').textContent =
+          'History file abhi tak nahi bani — pehla run hone do.';
+      });
+  </script>
+</body>
+</html>
