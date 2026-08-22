@@ -1,5 +1,11 @@
 [
   {
+    "date": "2026-08-22 08:15 UTC",
+    "status": "failed",
+    "post_preview": "",
+    "error": "LinkedIn post fail hua. Status: 401, Response: {\"status\":401,\"serviceErrorCode\":65606,\"code\":\"DISABLED_APPLICATION\",\"message\":\"Application is disabled\"}"
+  },
+  {
     "date": "2026-08-22 08:04 UTC",
     "status": "failed",
     "post_preview": "",
