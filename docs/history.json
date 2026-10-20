@@ -1,5 +1,11 @@
 [
   {
+    "date": "2026-10-20 08:49 UTC",
+    "status": "failed",
+    "post_preview": "",
+    "error": "LinkedIn post fail hua. Status: 401, Response: {\"status\":401,\"serviceErrorCode\":65606,\"code\":\"DISABLED_APPLICATION\",\"message\":\"Application is disabled\"}"
+  },
+  {
     "date": "2026-10-19 09:14 UTC",
     "status": "failed",
     "post_preview": "",
@@ -349,12 +355,6 @@
   },
   {
     "date": "2026-08-24 05:18 UTC",
-    "status": "failed",
-    "post_preview": "",
-    "error": "LinkedIn post fail hua. Status: 401, Response: {\"status\":401,\"serviceErrorCode\":65606,\"code\":\"DISABLED_APPLICATION\",\"message\":\"Application is disabled\"}"
-  },
-  {
-    "date": "2026-08-24 04:23 UTC",
     "status": "failed",
     "post_preview": "",
     "error": "LinkedIn post fail hua. Status: 401, Response: {\"status\":401,\"serviceErrorCode\":65606,\"code\":\"DISABLED_APPLICATION\",\"message\":\"Application is disabled\"}"
