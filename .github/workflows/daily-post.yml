@@ -2,15 +2,34 @@ name: Daily LinkedIn AI Post
 
 on:
   schedule:
-    - cron: '30 3 * * *'
+    - cron: '30 3 * * *'      # Roz 9:00 AM IST (UTC 3:30)
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Sirf test - post banao lekin LinkedIn par mat daalo'
+        type: boolean
+        default: false
+      force:
+        description: 'Aaj post ho chuka ho tab bhi dobara post karo'
+        type: boolean
+        default: false
+      post_format:
+        description: 'Post ka style (khaali = automatic rotation)'
+        type: choice
+        default: ''
+        options: ['', story, contrarian, breakdown, practical, question]
 
 permissions:
   contents: write
 
+concurrency:
+  group: daily-linkedin-post
+  cancel-in-progress: false
+
 jobs:
   post-to-linkedin:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Repo checkout karo
         uses: actions/checkout@v4
@@ -19,6 +38,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: pip
 
       - name: Libraries install karo
         run: pip install -r requirements.txt
@@ -28,13 +48,25 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
           LINKEDIN_PERSON_URN: ${{ secrets.LINKEDIN_PERSON_URN }}
+          LINKEDIN_TOKEN_CREATED: ${{ vars.LINKEDIN_TOKEN_CREATED }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          FORCE: ${{ inputs.force }}
+          POST_FORMAT: ${{ inputs.post_format }}
         run: python scripts/run_all.py
-        continue-on-error: true
 
+      # Script fail ho tab bhi history save ho, taaki dashboard par error dikhe.
+      # (Script fail hone par poora run laal rahega aur GitHub email bhejega.)
       - name: history.json wapas repo mein commit karo
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/history.json
-          git diff --staged --quiet || git commit -m "Update post history [automated]"
-          git push
+          git diff --staged --quiet && exit 0
+          git commit -m "Update post history [automated]"
+          for i in 1 2 3; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push && exit 0
+            sleep 5
+          done
+          exit 1

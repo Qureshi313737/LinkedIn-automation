@@ -1,0 +1,28 @@
+{
+  "_help": "Ye file tum apni marzi se edit kar sakte ho. Code chhune ki zaroorat nahi. Details README.md mein.",
+
+  "author_persona": "I work in tech and follow the AI industry and the business side of technology closely. I like explaining what news actually means for people building products and careers.",
+
+  "post_language": "English",
+  "min_words": 120,
+  "max_words": 220,
+  "max_hashtags": 3,
+  "include_source_link": false,
+
+  "openai_model": "gpt-4o",
+
+  "topics": [
+    {"name": "AI industry", "query": "artificial intelligence"},
+    {"name": "AI startups and funding", "query": "AI startup funding OR raises"},
+    {"name": "Tech market", "query": "tech stocks OR big tech earnings OR semiconductor market"}
+  ],
+
+  "extra_rss_feeds": [
+    "https://techcrunch.com/category/artificial-intelligence/feed/",
+    "https://venturebeat.com/category/ai/feed/",
+    "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml"
+  ],
+
+  "news_max_age_hours": 36,
+  "max_news_items": 25
+}
